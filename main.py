@@ -24,20 +24,40 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(LicensePlate, self).__init__()
         self.setupUi(self)  # Initialize UI
-        
-        # Populate state dropdown
-        self.state_dropdown.addItems(sorted(STATES.keys()))  
+
+        # List of buttons for navigation
+        self.nav_buttons = [
+            self.btnLicensePlate,
+            self.btnBlank1,
+            self.btnBlank2,
+            self.btnBlank3
+        ]
+
+        # Set default underlined button
+        self.set_active_button(self.btnLicensePlate)
 
         # Connect buttons to respective functions
+        self.state_dropdown.addItems(sorted(STATES.keys()))  
         self.search_button.clicked.connect(self.fetch_plate_info)
-        self.btnLicensePlate.clicked.connect(lambda: self.change_page(0))
-        self.btnBlank1.clicked.connect(lambda: self.change_page(1))
-        self.btnBlank2.clicked.connect(lambda: self.change_page(2))
-        self.btnBlank3.clicked.connect(lambda: self.change_page(3))
+        self.btnLicensePlate.clicked.connect(lambda: self.change_page(0, self.btnLicensePlate))
+        self.btnBlank1.clicked.connect(lambda: self.change_page(1, self.btnBlank1))
+        self.btnBlank2.clicked.connect(lambda: self.change_page(2, self.btnBlank2))
+        self.btnBlank3.clicked.connect(lambda: self.change_page(3, self.btnBlank3))
 
-    def change_page(self, index):
-        """Change stack widget page."""
+    def change_page(self, index, clicked_button):
+        """Change the stacked widget page and update active button styling."""
         self.stackedWidget.setCurrentIndex(index)
+        self.set_active_button(clicked_button)
+
+    def set_active_button(self, active_button):
+        """Apply underline to the active button and remove from others."""
+        for button in self.nav_buttons:
+            button.setStyleSheet("color:black;")  # Remove underline
+        
+        # Set underline for the active button
+        active_button.setStyleSheet("color:#1159A8")  # Apply underline
+
+   
 
     def fetch_plate_info(self):
         """Fetch license plate details from API."""
@@ -78,7 +98,9 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
                 entry = f"{key}: {value}"
                 self.result_listbox.addItem(entry)
                 text_content.append(entry)
+        print(f"Result Listbox Height: {self.result_listbox.height()}")
 
+        # self.textEdit.setPlainText("\n".join(text_content))  # Convert list to string
     # Set text in plainTextEdit
         # Adjust listbox size based on entries
         # self.resize_listbox()
@@ -92,7 +114,6 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
         self.vinTable.setHorizontalHeaderLabels(["Key", "Value"])  # Set column headers
 
         for row, (key, value) in enumerate(filtered_vin_data.items()):
-            print(row, key, value)
             self.vinTable.setItem(row, 0, QTableWidgetItem(key))
             self.vinTable.setItem(row, 1, QTableWidgetItem(value))
 

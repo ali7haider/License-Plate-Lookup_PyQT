@@ -475,6 +475,18 @@ background-color:#146CD0;
            </item>
            <item>
             <widget class="QFrame" name="frame_2">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>190</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>191</height>
+              </size>
+             </property>
              <property name="frameShape">
               <enum>QFrame::StyledPanel</enum>
              </property>
@@ -482,8 +494,21 @@ background-color:#146CD0;
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
+              <property name="topMargin">
+               <number>5</number>
+              </property>
+              <property name="bottomMargin">
+               <number>5</number>
+              </property>
               <item>
-               <widget class="QListWidget" name="result_listbox"/>
+               <widget class="QListWidget" name="result_listbox">
+                <property name="styleSheet">
+                 <string notr="true">padding:0px;</string>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -497,8 +522,18 @@ background-color:#146CD0;
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5">
+              <property name="topMargin">
+               <number>5</number>
+              </property>
+              <property name="bottomMargin">
+               <number>11</number>
+              </property>
               <item>
-               <widget class="QTableWidget" name="vinTable"/>
+               <widget class="QTableWidget" name="vinTable">
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
