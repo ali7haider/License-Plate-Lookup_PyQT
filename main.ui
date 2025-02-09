@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>930</width>
-    <height>678</height>
+    <width>974</width>
+    <height>686</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -182,7 +182,7 @@ color:white;</string>
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="btnLicensePlate">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -198,7 +198,7 @@ color:white;</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="btnBlank1">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -214,7 +214,7 @@ color:white;</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_4">
+        <widget class="QPushButton" name="btnBlank3">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -230,7 +230,7 @@ color:white;</string>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="btnBlank2">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -278,19 +278,22 @@ color:white;</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="leftMargin">
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="topMargin">
         <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
        </property>
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
          <widget class="QWidget" name="licensePlatePage">
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <property name="spacing">
@@ -391,10 +394,10 @@ color:white;</string>
                <number>0</number>
               </property>
               <property name="verticalSpacing">
-               <number>0</number>
+               <number>5</number>
               </property>
               <item row="1" column="1">
-               <widget class="QLineEdit" name="dump_path_textbox">
+               <widget class="QLineEdit" name="plate_entry">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -407,7 +410,7 @@ color:white;</string>
                </widget>
               </item>
               <item row="3" column="1">
-               <widget class="QComboBox" name="comboBox">
+               <widget class="QComboBox" name="state_dropdown">
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -431,7 +434,7 @@ color:white;</string>
                </widget>
               </item>
               <item row="4" column="1">
-               <widget class="QPushButton" name="ndk_browse_button">
+               <widget class="QPushButton" name="search_button">
                 <property name="minimumSize">
                  <size>
                   <width>150</width>
@@ -480,7 +483,7 @@ background-color:#146CD0;
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="QListWidget" name="listWidget"/>
+               <widget class="QListWidget" name="result_listbox"/>
               </item>
              </layout>
             </widget>
@@ -495,7 +498,7 @@ background-color:#146CD0;
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
-               <widget class="QTableWidget" name="tableWidget"/>
+               <widget class="QTableWidget" name="vinTable"/>
               </item>
              </layout>
             </widget>
@@ -503,6 +506,8 @@ background-color:#146CD0;
           </layout>
          </widget>
          <widget class="QWidget" name="page_2"/>
+         <widget class="QWidget" name="page"/>
+         <widget class="QWidget" name="page_3"/>
         </widget>
        </item>
       </layout>
