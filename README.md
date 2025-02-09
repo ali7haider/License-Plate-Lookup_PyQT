@@ -1,0 +1,1 @@
+# License-Plate-Lookup_PyQT
