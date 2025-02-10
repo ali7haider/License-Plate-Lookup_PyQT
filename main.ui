@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Big R Ranch Security</string>
   </property>
   <property name="styleSheet">
    <string notr="true">#bg{
@@ -99,13 +99,13 @@ QComboBox:hover {
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>50</height>
+        <height>53</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>50</height>
+        <height>53</height>
        </size>
       </property>
       <property name="styleSheet">
@@ -119,6 +119,12 @@ QComboBox:hover {
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="topMargin">
+        <number>5</number>
+       </property>
+       <property name="bottomMargin">
+        <number>5</number>
+       </property>
        <item>
         <widget class="QLabel" name="label_2">
          <property name="styleSheet">
@@ -126,10 +132,10 @@ QComboBox:hover {
 color:white;</string>
          </property>
          <property name="text">
-          <string>License Plate Lookup</string>
+          <string>Big R Ranch Security</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          <set>Qt::AlignCenter</set>
          </property>
         </widget>
        </item>
@@ -484,7 +490,7 @@ background-color:#146CD0;
              <property name="maximumSize">
               <size>
                <width>16777215</width>
-               <height>191</height>
+               <height>192</height>
               </size>
              </property>
              <property name="frameShape">
