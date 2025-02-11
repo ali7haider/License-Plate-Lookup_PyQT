@@ -1,10 +1,11 @@
 from main_ui import Ui_MainWindow  # Import the generated UI class
 import sys
 import requests
-
+import traceback
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QHeaderView
 )
+from api_handler import get_plate_info  # Import API function
 
 # State dictionary
 STATES = {
@@ -22,113 +23,109 @@ STATES = {
 
 class LicensePlate(QMainWindow, Ui_MainWindow):
     def __init__(self):
-        super(LicensePlate, self).__init__()
-        self.setupUi(self)  # Initialize UI
+        try:
+            super(LicensePlate, self).__init__()
+            self.setupUi(self)  # Initialize UI
 
-        # List of buttons for navigation
-        self.nav_buttons = [
-            self.btnLicensePlate,
-            self.btnBlank1,
-            self.btnBlank2,
-            self.btnBlank3
-        ]
+            # List of buttons for navigation
+            self.nav_buttons = [
+                self.btnLicensePlate,
+                self.btnPhoneLookup,
+                self.btnZipLookup,
+            ]
 
-        # Set default underlined button
-        self.set_active_button(self.btnLicensePlate)
+            # Set default underlined button
+            self.set_active_button(self.btnLicensePlate)
 
-        # Connect buttons to respective functions
-        self.state_dropdown.addItems(sorted(STATES.keys()))  
-        self.search_button.clicked.connect(self.fetch_plate_info)
-        self.btnLicensePlate.clicked.connect(lambda: self.change_page(0, self.btnLicensePlate))
-        self.btnBlank1.clicked.connect(lambda: self.change_page(1, self.btnBlank1))
-        self.btnBlank2.clicked.connect(lambda: self.change_page(2, self.btnBlank2))
-        self.btnBlank3.clicked.connect(lambda: self.change_page(3, self.btnBlank3))
+            # Connect buttons to respective functions
+            self.state_dropdown.addItems(sorted(STATES.keys()))  
+            self.btnLicensePlate.clicked.connect(lambda: self.change_page(0, self.btnLicensePlate))
+            self.btnPhoneLookup.clicked.connect(lambda: self.change_page(1, self.btnPhoneLookup))
+            self.btnZipLookup.clicked.connect(lambda: self.change_page(2, self.btnZipLookup))
+            # self.btnBlank3.clicked.connect(lambda: self.change_page(3, self.btnBlank3))
 
+            self.search_button.clicked.connect(self.fetch_plate_info)
+        except Exception as e:
+            self.show_error("Initialization Error", str(e))
     def change_page(self, index, clicked_button):
         """Change the stacked widget page and update active button styling."""
-        self.stackedWidget.setCurrentIndex(index)
-        self.set_active_button(clicked_button)
+        try:
+            self.stackedWidget.setCurrentIndex(index)
+            self.set_active_button(clicked_button)
+        except Exception as e:
+            self.show_error("Page Change Error", str(e))
 
     def set_active_button(self, active_button):
         """Apply underline to the active button and remove from others."""
-        for button in self.nav_buttons:
-            button.setStyleSheet("color:black;")  # Remove underline
-        
-        # Set underline for the active button
-        active_button.setStyleSheet("color:#1159A8")  # Apply underline
-
-   
+        try:
+            for button in self.nav_buttons:
+                button.setStyleSheet("color:black;")  # Remove underline
+            
+            active_button.setStyleSheet("color:#1159A8")  # Apply underline
+        except Exception as e:
+            self.show_error("Button Styling Error", str(e))
 
     def fetch_plate_info(self):
         """Fetch license plate details from API."""
-        plate = self.plate_entry.text().upper()  # Get plate number
-        state = self.state_dropdown.currentText()  # Get selected state
-        
-        if not plate or not state:
-            QMessageBox.warning(self, "Input Error", "Please enter a plate number and select a state.")
-            return
-        
-        api_url = f"https://api.licenselookup.org/license-plate-search?plate={plate}&state={state}&format=json&request_type=web&access_token=5b13d1c13f8a04d0ffe80b725866843f"
-
         try:
-            response = requests.get(api_url)
-            response.raise_for_status()
-            data = response.json()
-
-            if "content" not in data:
-                QMessageBox.critical(self, "Invalid Plate", "The entered plate is not valid or not found.")
+            plate = self.plate_entry.text().upper()  # Get plate number
+            state = self.state_dropdown.currentText()  # Get selected state
+            
+            if not plate or not state:
+                QMessageBox.warning(self, "Input Error", "Please enter a plate number and select a state.")
                 return
 
-            self.update_results(data["content"])  # Update UI with results
-        except requests.exceptions.RequestException as e:
-            QMessageBox.critical(self, "Error", f"Request failed: {str(e)}")
+            response_data = get_plate_info(plate, state)
+            if response_data:
+                self.update_results(response_data)
+            else:
+                QMessageBox.critical(self, "API Error", "Failed to fetch license plate details.")
+
+        except Exception as e:
+            self.show_error("Fetch Plate Info Error", str(e))
 
     def update_results(self, data):
-        """Update UI with fetched results in vinTable, skipping empty values."""
-        self.result_listbox.clear()  # Clear previous results
-        self.vinTable.setRowCount(0)  # Clear previous table entries
+        """Update UI with fetched results."""
+        try:
+            self.result_listbox.clear()  
+            self.vinTable.setRowCount(0)  
 
-        details = ["Make", "Model", "Year", "Plate", "State", "Country", "VIN"]
-        text_content = []  # Store text for plainTextEdit
+            details = ["Make", "Model", "Year", "Plate", "State", "Country", "VIN"]
 
-        # Populate result_listbox with key details
-        for key in details:
-            value = data.get(key.lower(), "").strip()
-            if value:  # Avoid inserting empty values
-                entry = f"{key}: {value}"
-                self.result_listbox.addItem(entry)
-                text_content.append(entry)
-        print(f"Result Listbox Height: {self.result_listbox.height()}")
+            # Populate result_listbox
+            for key in details:
+                value = data.get(key.lower(), "").strip()
+                if value:
+                    entry = f"{key}: {value}"
+                    self.result_listbox.addItem(entry)
 
-        # self.textEdit.setPlainText("\n".join(text_content))  # Convert list to string
-    # Set text in plainTextEdit
-        # Adjust listbox size based on entries
-        # self.resize_listbox()
+            # Populate vinTable
+            vin_data = data.get("vin_data", {})
+            filtered_vin_data = {key: value for key, value in vin_data.items() if value.strip()}
 
-        # Populate vinTable with VIN data (Skipping empty values)
-        vin_data = data.get("vin_data", {})
-        filtered_vin_data = {key: value for key, value in vin_data.items() if value.strip()}  # Remove empty values
+            self.vinTable.setRowCount(len(filtered_vin_data))
+            self.vinTable.setColumnCount(2)
+            self.vinTable.setHorizontalHeaderLabels(["Key", "Value"])
 
-        self.vinTable.setRowCount(len(filtered_vin_data))  # Set row count based on non-empty vin_data
-        self.vinTable.setColumnCount(2)  # Ensure at least 2 columns exist
-        self.vinTable.setHorizontalHeaderLabels(["Key", "Value"])  # Set column headers
+            for row, (key, value) in enumerate(filtered_vin_data.items()):
+                self.vinTable.setItem(row, 0, QTableWidgetItem(key))
+                self.vinTable.setItem(row, 1, QTableWidgetItem(value))
 
-        for row, (key, value) in enumerate(filtered_vin_data.items()):
-            self.vinTable.setItem(row, 0, QTableWidgetItem(key))
-            self.vinTable.setItem(row, 1, QTableWidgetItem(value))
+            self.vinTable.resizeColumnsToContents()
+            self.vinTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
-        # Auto-resize columns for better visibility
-        self.vinTable.resizeColumnsToContents()
-        self.vinTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)  # Adjust column widths
+        except Exception as e:
+            self.show_error("Update Results Error", str(e))
 
-    def resize_listbox(self):
-        """Dynamically resize the list box based on the number of items."""
-        item_count = self.result_listbox.count()
-        item_height = 20  # Approximate height per item
-        max_height = 200  # Set a maximum height
+    def show_error(self, title, message):
+        """Display an error message."""
+        error_details = traceback.format_exc()
+        print(f"ERROR: {message}\n{error_details}")  # Log error details
+        QMessageBox.critical(self, title, f"{message}\n\nCheck console for details.")
+    
+   
 
-        new_height = min(item_count * item_height, max_height)
-        self.result_listbox.setFixedHeight(new_height)
+    
 
 
 if __name__ == "__main__":
