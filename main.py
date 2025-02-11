@@ -46,6 +46,7 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
 
             self.search_button.clicked.connect(self.fetch_plate_info)
             self.search_button_2.clicked.connect(self.fetch_phone_info)  # New phone search button
+            self.search_button_3.clicked.connect(self.fetch_zip_info)  # New phone search button
 
         except Exception as e:
             self.show_error("Initialization Error", str(e))

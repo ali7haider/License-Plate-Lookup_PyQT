@@ -53,8 +53,8 @@ class Ui_MainWindow(object):
 "    border-radius: 5px;\n"
 "    border: 1px solid gray;\n"
 "    padding-left: 5px;\n"
-"    selection-color: rgb(255, 255, 255);\n"
-"    selection-background-color: rgb(255, 121, 198);\n"
+"    selection-color: #fff;\n"
+"    selection-background-color: #1159A8;\n"
 "}\n"
 "QLineEdit:hover {\n"
 "    border: 2px solid gray;\n"
@@ -68,7 +68,7 @@ class Ui_MainWindow(object):
 "    border: 1px solid gray;\n"
 "    padding-left: 10px;\n"
 "    background-color: white;\n"
-"    selection-background-color: rgb(255, 121, 198);\n"
+"    selection-background-color: #1159A8;\n"
 "    selection-color: white;\n"
 "    height: 25px;  /* Adjust height */\n"
 "}\n"
@@ -452,7 +452,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.bg)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

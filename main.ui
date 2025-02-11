@@ -52,8 +52,8 @@ QLineEdit {
 	border-radius: 5px;
 	border: 1px solid gray;
 	padding-left: 5px;
-	selection-color: rgb(255, 255, 255);
-	selection-background-color: rgb(255, 121, 198);
+	selection-color: #fff;
+	selection-background-color: #1159A8;
 }
 QLineEdit:hover {
 	border: 2px solid gray;
@@ -67,7 +67,7 @@ QComboBox {
     border: 1px solid gray;
     padding-left: 10px;
     background-color: white;
-    selection-background-color: rgb(255, 121, 198);
+    selection-background-color: #1159A8;
     selection-color: white;
     height: 25px;  /* Adjust height */
 }
@@ -282,7 +282,7 @@ color:white;</string>
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="licensePlatePage">
           <layout class="QVBoxLayout" name="verticalLayout_3">
