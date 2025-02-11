@@ -84,8 +84,8 @@ class Ui_MainWindow(object):
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.frame_6 = QtWidgets.QFrame(self.bg)
-        self.frame_6.setMinimumSize(QtCore.QSize(0, 53))
-        self.frame_6.setMaximumSize(QtCore.QSize(16777215, 53))
+        self.frame_6.setMinimumSize(QtCore.QSize(0, 60))
+        self.frame_6.setMaximumSize(QtCore.QSize(16777215, 60))
         self.frame_6.setStyleSheet("background-color:#1159A8;\n"
 "")
         self.frame_6.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -95,7 +95,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.setContentsMargins(-1, 5, -1, 5)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.label_2 = QtWidgets.QLabel(self.frame_6)
-        self.label_2.setStyleSheet("font: bold 14pt \"Arial\";\n"
+        self.label_2.setStyleSheet("font: bold 20pt \"Arial\";\n"
 "color:white;")
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
@@ -472,4 +472,3 @@ class Ui_MainWindow(object):
         self.label_4.setText(_translate("MainWindow", "Zip Code Lookup"))
         self.dump_label_3.setText(_translate("MainWindow", "Zip Code:"))
         self.search_button_3.setText(_translate("MainWindow", "Search"))
-import resources_rc
