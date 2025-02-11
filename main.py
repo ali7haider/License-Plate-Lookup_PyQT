@@ -5,7 +5,7 @@ import traceback
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QHeaderView
 )
-from api_handler import get_plate_info  # Import API function
+from api_handler import get_plate_info,get_phone_info,get_zip_info  # Import API function
 
 # State dictionary
 STATES = {
@@ -45,6 +45,8 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
             # self.btnBlank3.clicked.connect(lambda: self.change_page(3, self.btnBlank3))
 
             self.search_button.clicked.connect(self.fetch_plate_info)
+            self.search_button_2.clicked.connect(self.fetch_phone_info)  # New phone search button
+
         except Exception as e:
             self.show_error("Initialization Error", str(e))
     def change_page(self, index, clicked_button):
@@ -117,6 +119,109 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.show_error("Update Results Error", str(e))
 
+    def fetch_phone_info(self):
+        """Fetch phone number details from API."""
+        try:
+            phone = self.phone_entry.text().strip()  # Get phone number
+
+            if not phone:
+                QMessageBox.warning(self, "Input Error", "Please enter a phone number.")
+                return
+
+            response_data = get_phone_info(phone)
+            if response_data:
+                self.update_phone_results(response_data)
+            else:
+                QMessageBox.critical(self, "API Error", "Failed to fetch phone number details.")
+
+        except Exception as e:
+            self.show_error("Fetch Phone Info Error", str(e))
+
+    def update_phone_results(self, data):
+        """Update UI with fetched phone number results."""
+        try:
+            self.phoneList.clear()  
+            self.phoneTable.setRowCount(0)  
+
+            details = ["Carrier", "Line Type", "Location", "Timezone", "Risk Score"]
+
+            # Populate phoneList
+            for key in details:
+                value = data.get(key.lower(), "").strip()
+                if value:
+                    entry = f"{key}: {value}"
+                    self.phoneList.addItem(entry)
+
+            # Populate phoneTable
+            phone_data = data.get("details", {})
+            filtered_phone_data = {key: value for key, value in phone_data.items() if value.strip()}
+
+            self.phoneTable.setRowCount(len(filtered_phone_data))
+            self.phoneTable.setColumnCount(2)
+            self.phoneTable.setHorizontalHeaderLabels(["Key", "Value"])
+
+            for row, (key, value) in enumerate(filtered_phone_data.items()):
+                self.phoneTable.setItem(row, 0, QTableWidgetItem(key))
+                self.phoneTable.setItem(row, 1, QTableWidgetItem(value))
+
+            self.phoneTable.resizeColumnsToContents()
+            self.phoneTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        except Exception as e:
+            self.show_error("Update Phone Results Error", str(e))
+    def fetch_zip_info(self):
+        """Fetch ZIP code details from API."""
+        try:
+            zip_code = self.zip_entry.text().strip()  # Get ZIP code
+
+            if not zip_code:
+                QMessageBox.warning(self, "Input Error", "Please enter a ZIP code.")
+                return
+
+            response_data = get_zip_info(zip_code)
+            if response_data:
+                self.update_zip_results(response_data)
+            else:
+                QMessageBox.critical(self, "API Error", "Failed to fetch ZIP code details.")
+
+        except Exception as e:
+            self.show_error("Fetch ZIP Code Info Error", str(e))
+
+    def update_zip_results(self, data):
+        """Update UI with fetched ZIP code results."""
+        try:
+            self.zipList.clear()  
+            self.zipTable.setRowCount(0)  
+
+            details = ["City", "State", "County", "Latitude", "Longitude", "Timezone"]
+
+            # Populate zipList
+            for key in details:
+                value = data.get(key.lower(), "").strip()
+                if value:
+                    entry = f"{key}: {value}"
+                    self.zipList.addItem(entry)
+
+            # Populate zipTable
+            zip_data = data.get("details", {})
+            filtered_zip_data = {key: value for key, value in zip_data.items() if value.strip()}
+
+            self.zipTable.setRowCount(len(filtered_zip_data))
+            self.zipTable.setColumnCount(2)
+            self.zipTable.setHorizontalHeaderLabels(["Key", "Value"])
+
+            for row, (key, value) in enumerate(filtered_zip_data.items()):
+                self.zipTable.setItem(row, 0, QTableWidgetItem(key))
+                self.zipTable.setItem(row, 1, QTableWidgetItem(value))
+
+            self.zipTable.resizeColumnsToContents()
+            self.zipTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        except Exception as e:
+            self.show_error("Update ZIP Code Results Error", str(e))
+
+        
+    
     def show_error(self, title, message):
         """Display an error message."""
         error_details = traceback.format_exc()
