@@ -282,7 +282,7 @@ color:white;</string>
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="licensePlatePage">
           <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -468,13 +468,13 @@ background-color:#146CD0;
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>190</height>
+               <height>191</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>16777215</width>
-               <height>192</height>
+               <height>191</height>
               </size>
              </property>
              <property name="frameShape">
@@ -697,13 +697,13 @@ background-color:#146CD0;
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>190</height>
+               <height>141</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>16777215</width>
-               <height>192</height>
+               <height>141</height>
               </size>
              </property>
              <property name="frameShape">
@@ -923,13 +923,13 @@ background-color:#146CD0;
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>190</height>
+               <height>141</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>16777215</width>
-               <height>192</height>
+               <height>141</height>
               </size>
              </property>
              <property name="frameShape">

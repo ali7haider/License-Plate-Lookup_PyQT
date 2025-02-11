@@ -39,8 +39,7 @@ def get_phone_info(phone):
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
-
-        return data.get("content")
+        return data.get("data")
 
     except requests.exceptions.Timeout:
         print("ERROR: API request timed out.")
@@ -63,8 +62,7 @@ def get_zip_info(zip_code):
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
-
-        return data.get("content")
+        return data
 
     except requests.exceptions.Timeout:
         print("ERROR: API request timed out.")

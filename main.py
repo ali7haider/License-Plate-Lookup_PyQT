@@ -21,6 +21,9 @@ STATES = {
     "Virginia": "VA", "Washington": "WA", "West Virginia": "WV", "Wisconsin": "WI", "Wyoming": "WY"
 }
 
+from PyQt5.QtGui import QIntValidator, QRegExpValidator
+from PyQt5.QtCore import QRegExp
+
 class LicensePlate(QMainWindow, Ui_MainWindow):
     def __init__(self):
         try:
@@ -42,14 +45,39 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
             self.btnLicensePlate.clicked.connect(lambda: self.change_page(0, self.btnLicensePlate))
             self.btnPhoneLookup.clicked.connect(lambda: self.change_page(1, self.btnPhoneLookup))
             self.btnZipLookup.clicked.connect(lambda: self.change_page(2, self.btnZipLookup))
-            # self.btnBlank3.clicked.connect(lambda: self.change_page(3, self.btnBlank3))
 
             self.search_button.clicked.connect(self.fetch_plate_info)
-            self.search_button_2.clicked.connect(self.fetch_phone_info)  # New phone search button
-            self.search_button_3.clicked.connect(self.fetch_zip_info)  # New phone search button
+            self.search_button_2.clicked.connect(self.fetch_phone_info)
+            self.search_button_3.clicked.connect(self.fetch_zip_info)
 
+            # ✅ Apply Validators for Input Restrictions
+            self.apply_input_validators()
+
+    
         except Exception as e:
             self.show_error("Initialization Error", str(e))
+
+
+    def apply_input_validators(self):
+        """Apply validators to restrict input format."""
+
+        # 1️⃣ Only Allow Digits in zip_entry and phone_entry (Using RegExp)
+        digit_validator = QRegExpValidator(QRegExp("^[0-9]+$"), self)
+        self.zip_entry.setValidator(digit_validator)
+        self.phone_entry.setValidator(digit_validator)
+
+        # 2️⃣ Allow lowercase letters but convert to uppercase in plate_entry
+        plate_validator = QRegExpValidator(QRegExp("^[a-zA-Z0-9\\-\\s]+$"), self)  # Allow A-Z, a-z, 0-9, -, and spaces
+        self.plate_entry.setValidator(plate_validator)
+
+        # Convert input to uppercase dynamically
+        self.plate_entry.textChanged.connect(self.convert_plate_to_uppercase)
+
+    def convert_plate_to_uppercase(self):
+        """Convert plate_entry text to uppercase dynamically."""
+        text = self.plate_entry.text()
+        self.plate_entry.setText(text.upper())
+
     def change_page(self, index, clicked_button):
         """Change the stacked widget page and update active button styling."""
         try:
@@ -141,27 +169,52 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
     def update_phone_results(self, data):
         """Update UI with fetched phone number results."""
         try:
-            self.phoneList.clear()  
-            self.phoneTable.setRowCount(0)  
+            self.phoneList.clear()
+            self.phoneTable.setRowCount(0)
+            
+            print("Raw data:", data)  # Debugging step
+            
+            # Extract the actual content
+            content = data.get("content", {})
+            print("Extracted content:", content)  # Debugging step
 
-            details = ["Carrier", "Line Type", "Location", "Timezone", "Risk Score"]
+            caller_info = content.get("caller_name", {})
+            carrier_info = content.get("carrier", {})
+
+            print("Caller Info:", caller_info)  # Debugging step
+            print("Carrier Info:", carrier_info)  # Debugging step
+
+            # Details for phoneList
+            details = {
+                "Caller Name": caller_info.get("caller_name", ""),
+                "Caller Type": caller_info.get("caller_type", ""),
+                "Country Code": content.get("country_code", ""),
+                "National Format": content.get("national_format", ""),
+                "Phone Number": content.get("phone_number", ""),
+            }
 
             # Populate phoneList
-            for key in details:
-                value = data.get(key.lower(), "").strip()
-                if value:
-                    entry = f"{key}: {value}"
-                    self.phoneList.addItem(entry)
+            for key, value in details.items():
+                if value.strip():
+                    self.phoneList.addItem(f"{key}: {value}")
+
+            # Details for phoneTable
+            table_data = {
+                "Mobile Country Code": carrier_info.get("mobile_country_code", ""),
+                "Mobile Network Code": carrier_info.get("mobile_network_code", ""),
+                "Name": carrier_info.get("name", ""),
+                "Type": carrier_info.get("type", ""),
+            }
+
+            # Filter out empty values
+            filtered_table_data = {key: value for key, value in table_data.items() if value.strip()}
 
             # Populate phoneTable
-            phone_data = data.get("details", {})
-            filtered_phone_data = {key: value for key, value in phone_data.items() if value.strip()}
-
-            self.phoneTable.setRowCount(len(filtered_phone_data))
+            self.phoneTable.setRowCount(len(filtered_table_data))
             self.phoneTable.setColumnCount(2)
             self.phoneTable.setHorizontalHeaderLabels(["Key", "Value"])
 
-            for row, (key, value) in enumerate(filtered_phone_data.items()):
+            for row, (key, value) in enumerate(filtered_table_data.items()):
                 self.phoneTable.setItem(row, 0, QTableWidgetItem(key))
                 self.phoneTable.setItem(row, 1, QTableWidgetItem(value))
 
@@ -170,6 +223,7 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
 
         except Exception as e:
             self.show_error("Update Phone Results Error", str(e))
+
     def fetch_zip_info(self):
         """Fetch ZIP code details from API."""
         try:
@@ -180,6 +234,7 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
                 return
 
             response_data = get_zip_info(zip_code)
+            print(response_data)
             if response_data:
                 self.update_zip_results(response_data)
             else:
@@ -191,27 +246,51 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
     def update_zip_results(self, data):
         """Update UI with fetched ZIP code results."""
         try:
-            self.zipList.clear()  
-            self.zipTable.setRowCount(0)  
+            self.zipList.clear()
+            self.zipTable.setRowCount(0)
 
-            details = ["City", "State", "County", "Latitude", "Longitude", "Timezone"]
+            print("Raw data:", data)  # Debugging step
+
+            # Extract the first entry from "Data" list
+            zip_info_list = data.get("Data", [])
+            if not zip_info_list:
+                self.show_error("ZIP Code Lookup Error", "No data available.")
+                return
+
+            zip_info = zip_info_list[0]  # Assuming only one ZIP code entry is returned
+            print("Extracted ZIP Info:", zip_info)  # Debugging step
+
+            # Details for zipList
+            details = {
+                "City": zip_info.get("City", ""),
+                "County": zip_info.get("County", ""),
+                "State": zip_info.get("State", ""),
+                "ZipLatitude": zip_info.get("ZipLatitude", ""),
+                "ZipLongitude": zip_info.get("ZipLongitude", ""),
+            }
 
             # Populate zipList
-            for key in details:
-                value = data.get(key.lower(), "").strip()
-                if value:
-                    entry = f"{key}: {value}"
-                    self.zipList.addItem(entry)
+            for key, value in details.items():
+                if value.strip():
+                    self.zipList.addItem(f"{key}: {value}")
+
+            # Details for zipTable
+            table_data = {
+                "CountyFIPS": zip_info.get("CountyFIPS", ""),
+                "StateFIPS": zip_info.get("StateFIPS", ""),
+                "Timezone": zip_info.get("TimeZone", ""),
+                "DayLightSavings": zip_info.get("DayLightSavings", ""),
+            }
+
+            # Filter out empty values
+            filtered_table_data = {key: value for key, value in table_data.items() if value.strip()}
 
             # Populate zipTable
-            zip_data = data.get("details", {})
-            filtered_zip_data = {key: value for key, value in zip_data.items() if value.strip()}
-
-            self.zipTable.setRowCount(len(filtered_zip_data))
+            self.zipTable.setRowCount(len(filtered_table_data))
             self.zipTable.setColumnCount(2)
             self.zipTable.setHorizontalHeaderLabels(["Key", "Value"])
 
-            for row, (key, value) in enumerate(filtered_zip_data.items()):
+            for row, (key, value) in enumerate(filtered_table_data.items()):
                 self.zipTable.setItem(row, 0, QTableWidgetItem(key))
                 self.zipTable.setItem(row, 1, QTableWidgetItem(value))
 
@@ -221,7 +300,7 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
         except Exception as e:
             self.show_error("Update ZIP Code Results Error", str(e))
 
-        
+            
     
     def show_error(self, title, message):
         """Display an error message."""

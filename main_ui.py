@@ -232,8 +232,8 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addWidget(self.search_button, 4, 1, 1, 1)
         self.verticalLayout_3.addWidget(self.frame_5)
         self.frame_2 = QtWidgets.QFrame(self.licensePlatePage)
-        self.frame_2.setMinimumSize(QtCore.QSize(0, 190))
-        self.frame_2.setMaximumSize(QtCore.QSize(16777215, 192))
+        self.frame_2.setMinimumSize(QtCore.QSize(0, 191))
+        self.frame_2.setMaximumSize(QtCore.QSize(16777215, 191))
         self.frame_2.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_2.setObjectName("frame_2")
@@ -324,8 +324,8 @@ class Ui_MainWindow(object):
         self.gridLayout_4.addWidget(self.search_button_2, 3, 1, 1, 1)
         self.verticalLayout_9.addWidget(self.frame_9)
         self.frame_8 = QtWidgets.QFrame(self.page_2)
-        self.frame_8.setMinimumSize(QtCore.QSize(0, 190))
-        self.frame_8.setMaximumSize(QtCore.QSize(16777215, 192))
+        self.frame_8.setMinimumSize(QtCore.QSize(0, 141))
+        self.frame_8.setMaximumSize(QtCore.QSize(16777215, 141))
         self.frame_8.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_8.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_8.setObjectName("frame_8")
@@ -415,8 +415,8 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addWidget(self.search_button_3, 3, 1, 1, 1)
         self.verticalLayout_12.addWidget(self.frame_13)
         self.frame_12 = QtWidgets.QFrame(self.page)
-        self.frame_12.setMinimumSize(QtCore.QSize(0, 190))
-        self.frame_12.setMaximumSize(QtCore.QSize(16777215, 192))
+        self.frame_12.setMinimumSize(QtCore.QSize(0, 141))
+        self.frame_12.setMaximumSize(QtCore.QSize(16777215, 141))
         self.frame_12.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_12.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_12.setObjectName("frame_12")
@@ -452,7 +452,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.bg)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -472,3 +472,4 @@ class Ui_MainWindow(object):
         self.label_4.setText(_translate("MainWindow", "Zip Code Lookup"))
         self.dump_label_3.setText(_translate("MainWindow", "Zip Code:"))
         self.search_button_3.setText(_translate("MainWindow", "Search"))
+import resources_rc
