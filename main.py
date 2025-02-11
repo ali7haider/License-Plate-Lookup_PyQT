@@ -110,6 +110,8 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
             if response_data:
                 self.update_results(response_data)
             else:
+                self.result_listbox.clear()  
+                self.vinTable.setRowCount(0)  
                 QMessageBox.critical(self, "API Error", "Failed to fetch license plate details.")
 
         except Exception as e:
@@ -161,8 +163,9 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
             if response_data:
                 self.update_phone_results(response_data)
             else:
+                self.phoneList.clear()
+                self.phoneTable.setRowCount(0)
                 QMessageBox.critical(self, "API Error", "Failed to fetch phone number details.")
-
         except Exception as e:
             self.show_error("Fetch Phone Info Error", str(e))
 
@@ -238,6 +241,8 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
             if response_data:
                 self.update_zip_results(response_data)
             else:
+                self.zipList.clear()
+                self.zipTable.setRowCount(0)         
                 QMessageBox.critical(self, "API Error", "Failed to fetch ZIP code details.")
 
         except Exception as e:
