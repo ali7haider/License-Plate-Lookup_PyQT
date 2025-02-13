@@ -3,10 +3,12 @@ import sys
 import requests
 import traceback
 from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QHeaderView
+    QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QHeaderView,QInputDialog, QLineEdit
 )
-from api_handler import get_plate_info,get_phone_info,get_zip_info  # Import API function
 
+from api_handler import get_plate_info,get_phone_info,get_zip_info  # Import API function
+import json
+CONFIG_FILE = "config.json"  # File to store business name
 # State dictionary
 STATES = {
     "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR", "California": "CA",
@@ -37,7 +39,9 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
                 self.btnZipLookup,
             ]
 
+            self.load_business_name()
             # Set default underlined button
+
             self.set_active_button(self.btnLicensePlate)
 
             # Connect buttons to respective functions
@@ -50,6 +54,10 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
             self.search_button_2.clicked.connect(self.fetch_phone_info)
             self.search_button_3.clicked.connect(self.fetch_zip_info)
 
+            self.actionExit.triggered.connect(self.close)
+            # Connect menu action to change business name
+            self.actionChange_Business_Name.triggered.connect(self.change_business_name)
+
             # ✅ Apply Validators for Input Restrictions
             self.apply_input_validators()
 
@@ -58,6 +66,85 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
             self.show_error("Initialization Error", str(e))
 
 
+    from PyQt5.QtWidgets import QInputDialog, QLineEdit
+
+    def change_business_name(self):
+        """Open styled input dialog to change business name, pre-fill with current title, and update UI."""
+        
+        current_name = self.lblTitle.text()  # Get current title
+
+        # Create a styled input dialog
+        dialog = QInputDialog(self)
+        dialog.setWindowTitle("Change Business Name")
+        dialog.setLabelText("Enter new business name:")
+        dialog.setTextValue(current_name)  # Pre-fill with current name
+        dialog.setTextEchoMode(QLineEdit.Normal)
+        dialog.resize(400, 150)  # Width x Height
+
+        # Apply stylesheet for styling the input box & buttons
+        dialog.setStyleSheet("""
+            QLabel {
+                font-size: 14px;
+                color: #333;
+            }
+            QLineEdit {
+                border-radius: 5px;
+                border: 1px solid gray;
+                padding-left: 5px;
+                selection-color: #fff;
+                selection-background-color: #1159A8;
+            }
+            QLineEdit:hover {
+                border: 2px solid gray;
+            }
+            QLineEdit:focus {
+                border: 2px solid gray;
+            }
+            QPushButton {
+                background-color: #1159A8;
+                color: white;
+                border-radius: 5px;
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #146CD0;
+            }
+            QPushButton:pressed {
+                background-color: #146CD0;
+            }
+        """)
+
+        # Execute dialog and get input
+        if dialog.exec_():
+            new_name = dialog.textValue().strip()
+            if new_name:
+                self.lblTitle.setText(new_name)  # Update label
+                self.setWindowTitle(new_name)  # Update app title
+
+                self.save_business_name(new_name)  # Save to JSON
+
+
+
+
+    def save_business_name(self, name):
+        """Save business name to config file."""
+        with open(CONFIG_FILE, "w") as file:
+            json.dump({"business_name": name}, file)
+    def load_business_name(self):
+        """Load business name from config file if available."""
+        try:
+            with open(CONFIG_FILE, "r") as file:
+                data = json.load(file)
+                business_name = data.get("business_name", "Big R Ranch Security")
+                self.lblTitle.setText(business_name)
+                self.setWindowTitle(business_name)  # Update app title
+
+        except (FileNotFoundError, json.JSONDecodeError):
+            self.lblTitle.setText("Big R Ranch Security")  # Fallback if config is missing or corrupted
+            self.setWindowTitle("Big R Ranch Security")  # Update app title
+
+    
     def apply_input_validators(self):
         """Apply validators to restrict input format."""
 

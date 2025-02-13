@@ -126,7 +126,7 @@ QComboBox:hover {
         <number>5</number>
        </property>
        <item>
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="lblTitle">
          <property name="styleSheet">
           <string notr="true">font: bold 20pt &quot;Arial&quot;;
 color:white;</string>
@@ -993,6 +993,66 @@ background-color:#146CD0;
     </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>974</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFa">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionExit"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionCopy"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionPaste"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionChange_Business_Name"/>
+   </widget>
+   <addaction name="menuFa"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuSettings"/>
+  </widget>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="text">
+    <string>Copy (CTRL+C)</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="text">
+    <string>Cut (CTRL+V)</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>Paste (CTRL+P)</string>
+   </property>
+  </action>
+  <action name="actionChange_Business_Name">
+   <property name="text">
+    <string>Change Business Name</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Outside Fiverr/1- Eden/Auto-Update-Tool_PyQT5/resources.qrc"/>
