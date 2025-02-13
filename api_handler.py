@@ -62,7 +62,10 @@ def get_zip_info(zip_code):
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
-        return data
+        if data.get("status") == "error":
+            return None
+
+        return data  # Return the valid data
 
     except requests.exceptions.Timeout:
         print("ERROR: API request timed out.")

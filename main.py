@@ -174,50 +174,50 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
         try:
             self.phoneList.clear()
             self.phoneTable.setRowCount(0)
-            
+
             print("Raw data:", data)  # Debugging step
-            
+
             # Extract the actual content
             content = data.get("content", {})
             print("Extracted content:", content)  # Debugging step
 
-            caller_info = content.get("caller_name", {})
-            carrier_info = content.get("carrier", {})
+            caller_info = content.get("caller_name", {}) or {}  # Ensure it's a dict
+            carrier_info = content.get("carrier", {}) or {}  # Ensure it's a dict
 
             print("Caller Info:", caller_info)  # Debugging step
             print("Carrier Info:", carrier_info)  # Debugging step
 
+            # Function to replace None values with "NA"
+            def safe_get(value):
+                return str(value).strip() if value not in (None, "None") else "NA"
+
             # Details for phoneList
             details = {
-                "Caller Name": caller_info.get("caller_name", ""),
-                "Caller Type": caller_info.get("caller_type", ""),
-                "Country Code": content.get("country_code", ""),
-                "National Format": content.get("national_format", ""),
-                "Phone Number": content.get("phone_number", ""),
+                "Caller Name": safe_get(caller_info.get("caller_name")),
+                "Caller Type": safe_get(caller_info.get("caller_type")),
+                "Country Code": safe_get(content.get("country_code")),
+                "National Format": safe_get(content.get("national_format")),
+                "Phone Number": safe_get(content.get("phone_number")),
             }
 
             # Populate phoneList
             for key, value in details.items():
-                if value.strip():
-                    self.phoneList.addItem(f"{key}: {value}")
+                self.phoneList.addItem(f"{key}: {value}")
 
             # Details for phoneTable
             table_data = {
-                "Mobile Country Code": carrier_info.get("mobile_country_code", ""),
-                "Mobile Network Code": carrier_info.get("mobile_network_code", ""),
-                "Name": carrier_info.get("name", ""),
-                "Type": carrier_info.get("type", ""),
+                "Mobile Country Code": safe_get(carrier_info.get("mobile_country_code")),
+                "Mobile Network Code": safe_get(carrier_info.get("mobile_network_code")),
+                "Name": safe_get(carrier_info.get("name")),
+                "Type": safe_get(carrier_info.get("type")),
             }
 
-            # Filter out empty values
-            filtered_table_data = {key: value for key, value in table_data.items() if value.strip()}
-
             # Populate phoneTable
-            self.phoneTable.setRowCount(len(filtered_table_data))
+            self.phoneTable.setRowCount(len(table_data))
             self.phoneTable.setColumnCount(2)
             self.phoneTable.setHorizontalHeaderLabels(["Key", "Value"])
 
-            for row, (key, value) in enumerate(filtered_table_data.items()):
+            for row, (key, value) in enumerate(table_data.items()):
                 self.phoneTable.setItem(row, 0, QTableWidgetItem(key))
                 self.phoneTable.setItem(row, 1, QTableWidgetItem(value))
 
@@ -226,6 +226,8 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
 
         except Exception as e:
             self.show_error("Update Phone Results Error", str(e))
+
+
 
     def fetch_zip_info(self):
         """Fetch ZIP code details from API."""
@@ -311,7 +313,7 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
         """Display an error message."""
         error_details = traceback.format_exc()
         print(f"ERROR: {message}\n{error_details}")  # Log error details
-        QMessageBox.critical(self, title, f"{message}\n\nCheck console for details.")
+        QMessageBox.critical(self, title, f"{message}\n\n")
     
    
 
