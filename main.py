@@ -5,7 +5,7 @@ import traceback
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QMessageBox, QTableWidgetItem, QHeaderView,QInputDialog, QLineEdit
 )
-
+from PyQt5.QtCore import QEvent
 from api_handler import get_plate_info,get_phone_info,get_zip_info  # Import API function
 import json
 CONFIG_FILE = "config.json"  # File to store business name
@@ -31,7 +31,16 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
         try:
             super(LicensePlate, self).__init__()
             self.setupUi(self)  # Initialize UI
+            # Track last focused QLineEdit
+            self.last_focused_lineedit = None
 
+            # Connect menu actions to respective functions
+            self.actionCopy.triggered.connect(self.copy_text)
+            self.actionCut.triggered.connect(self.cut_text)
+            self.actionPaste.triggered.connect(self.paste_text)
+
+            # Apply event filter to track focused QLineEdit
+            QApplication.instance().installEventFilter(self)
             # List of buttons for navigation
             self.nav_buttons = [
                 self.btnLicensePlate,
@@ -60,13 +69,31 @@ class LicensePlate(QMainWindow, Ui_MainWindow):
 
             # ✅ Apply Validators for Input Restrictions
             self.apply_input_validators()
-
     
         except Exception as e:
             self.show_error("Initialization Error", str(e))
 
 
-    from PyQt5.QtWidgets import QInputDialog, QLineEdit
+    def eventFilter(self, obj, event):
+        """Track the last focused QLineEdit."""
+        if event.type() == QEvent.FocusIn and isinstance(obj, QLineEdit):
+            self.last_focused_lineedit = obj  # Update last focused QLineEdit
+        return super().eventFilter(obj, event)
+
+    def copy_text(self):
+        """Copy selected text to clipboard."""
+        if self.last_focused_lineedit:
+            self.last_focused_lineedit.copy()
+
+    def cut_text(self):
+        """Cut selected text to clipboard."""
+        if self.last_focused_lineedit:
+            self.last_focused_lineedit.cut()
+
+    def paste_text(self):
+        """Paste text from clipboard."""
+        if self.last_focused_lineedit:
+            self.last_focused_lineedit.paste()
 
     def change_business_name(self):
         """Open styled input dialog to change business name, pre-fill with current title, and update UI."""
